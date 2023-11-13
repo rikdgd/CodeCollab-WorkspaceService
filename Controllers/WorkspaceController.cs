@@ -1,4 +1,5 @@
 using CodeCollab___WorkspaceService.Models;
+using CodeCollab___WorkspaceService.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CodeCollab___WorkspaceService.Controllers;
@@ -18,5 +19,13 @@ public class WorkspaceController : ControllerBase
     public IActionResult CreateWorkspace([FromBody] WorkspaceModel workspace)
     {
         return Ok("Workspace created successfully");
+    }
+    
+    [HttpGet(Name = "GetWorkspaceFiles")]
+    public IActionResult GetWorkspaceFiles(int workspaceId) {
+        Messenger messenger = new Messenger("localhost", "code-files", true);
+        messenger.SendMessage("GET files FOR workspace WHERE id = " + workspaceId);
+        List<string>? messages = messenger.ReadMessages();
+        return Ok("success");
     }
 }
