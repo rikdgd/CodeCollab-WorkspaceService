@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using CodeCollab___WorkspaceService.Models;
 using CodeCollab___WorkspaceService.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -18,14 +20,22 @@ public class WorkspaceController : ControllerBase
     [HttpPost(Name = "CreateWorkspace")]
     public IActionResult CreateWorkspace([FromBody] WorkspaceModel workspace)
     {
-        return Ok("Workspace created successfully");
+        try 
+        {
+            string workspaceData = JsonSerializer.Serialize(workspace);
+            
+            using (Messenger messenger = new Messenger("localhost", "WorkspaceService", "test-exchange", "test-queue", isConsumer: false))
+            {
+                messenger.SendMessage("CREATE workspace FROM: " + workspaceData);
+            }
+            
+            return Ok("Workspace created successfully");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
     
-    [HttpGet(Name = "GetWorkspaceFiles")]
-    public IActionResult GetWorkspaceFiles(int workspaceId) {
-        Messenger messenger = new Messenger("localhost", "code-files", true);
-        messenger.SendMessage("GET files FOR workspace WHERE id = " + workspaceId);
-        List<string>? messages = messenger.ReadMessages();
-        return Ok("success");
-    }
+
 }

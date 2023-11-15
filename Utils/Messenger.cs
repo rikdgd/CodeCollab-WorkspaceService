@@ -2,19 +2,17 @@ using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-
-
 namespace CodeCollab___WorkspaceService.Utils;
 
-public class Messenger
+public class Messenger : IDisposable
 {
     public string ExchangeName { get; private set; }
     public string QueueName { get; private set; }
     
     private List<string>? messageStorage { get; set; }
-    // private List<string>? messageLog { get; set; }
     private EventingBasicConsumer? consumer { get; set; }
     private ConnectionFactory factory { get; set; }
+    private string? consumerTag { get; set; }
     private IConnection connection { get; set; }
     private IModel channel { get; set; }
     private IBasicProperties publishProps { get; set; }
@@ -55,6 +53,12 @@ public class Messenger
                 autoDelete: false,
                 arguments: null
             );
+            
+            this.channel.QueueBind(
+                queue: this.QueueName,
+                exchange: this.ExchangeName,
+                routingKey: this.QueueName
+            );
         }
 
         this.publishProps = this.channel.CreateBasicProperties();
@@ -80,20 +84,21 @@ public class Messenger
                 // ToDo: Acknowledge the message ONLY when handling it went successful.
                 this.channel.BasicAck(deliveryTag: args.DeliveryTag, multiple: false);
             };
-        }
-    }
-    
-    ~Messenger() 
-    {
-        // Close the connection to the message bus.
-        if (this.consumer != null) 
-        {
-            string consumerTag = channel.BasicConsume(
+            
+            this.consumerTag = channel.BasicConsume(
                 queue: this.QueueName, 
                 autoAck: false, 
                 consumer: this.consumer
             );
-            channel.BasicCancel(consumerTag);
+        }
+    }
+    
+    public void Dispose()
+    {
+        // Close the connection to the message bus.
+        if (this.consumer != null) 
+        {
+            channel.BasicCancel(this.consumerTag);
         }
         this.channel.Close();
         this.connection.Close();
@@ -113,9 +118,6 @@ public class Messenger
             basicProperties: this.publishProps,
             body: messageBody
         );
-        
-        this.channel.Close();
-        this.connection.Close();
     }
 
     /// <summary>
@@ -130,9 +132,6 @@ public class Messenger
             basicProperties: this.publishProps,
             body: message
         );
-        
-        this.channel.Close();
-        this.connection.Close();
     }
 
     /// <summary>
@@ -164,17 +163,20 @@ public class Messenger
     {
         if (this.messageStorage == null) return null;
         
-        var message = this.messageStorage[0];
-        this.messageStorage.RemoveAt(0);
+        string message =  this.messageStorage[0];
+        messageStorage.RemoveAt(0);
+        
         return message;
     }
 
     public List<string>? readAndDestroyMessages()
     {
-        if (this.messageStorage == null) return null
-                
+        if (this.messageStorage == null) return null;
+        
         var messages = this.messageStorage;
-        this.messageStorage.Clear();
+        messageStorage.Clear();
+        
         return messages;
     }
 }
+
