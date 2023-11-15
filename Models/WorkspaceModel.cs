@@ -2,9 +2,15 @@ namespace CodeCollab___WorkspaceService.Models;
 
 public class WorkspaceModel
 {
-    public long Id { get; private set; }
-    public string Name { get; private set; }
-    public long OwnerId { get; private set; }
+    public long Id { get; set; }
+    public string Name { get; set; }
+    public long OwnerId { get; set; }
+
+    
+    public WorkspaceModel() 
+    {
+        
+    }
 
     public WorkspaceModel(int id, string name, int ownerId)
     {
