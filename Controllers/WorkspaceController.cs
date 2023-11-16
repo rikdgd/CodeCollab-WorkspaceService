@@ -1,4 +1,3 @@
-using System.Text.Json;
 using CodeCollab___WorkspaceService.Models;
 using CodeCollab___WorkspaceService.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -11,16 +10,13 @@ namespace CodeCollab___WorkspaceService.Controllers;
 public class WorkspaceController : ControllerBase
 {
     [HttpGet(Name = "GetWorkspace")]
-    public IActionResult GetWorkspace()
+    public IActionResult GetWorkspace(string workspaceId)
     {
-        // return Ok(new WorkspaceModel(1, "test-workspace", 23));
-        // WorkspaceModel model = new WorkspaceModel(33, "test123", 47);
-        // return Ok(JsonSerializer.Serialize(model)); // {"Id":33,"Name":"test123","OwnerId":47}
-
-
         WorkspaceService service = new WorkspaceService();
-        var entry = service.GetWorkspaceById(92);
-        return Ok(entry);
+        WorkspaceModel? workspace = service.GetWorkspaceById(workspaceId);
+        
+        if (workspace == null) return BadRequest("Could not find workspace with the given id.");
+        return Ok(workspace);
     }
 
     [HttpPost(Name = "CreateWorkspace")]

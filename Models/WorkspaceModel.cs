@@ -1,20 +1,22 @@
+using MongoDB.Bson;
+
 namespace CodeCollab___WorkspaceService.Models;
 
 public class WorkspaceModel
 {
-    public long Id { get; set; }
+    public ObjectId? Id { get; set; }
     public string Name { get; set; }
-    public long OwnerId { get; set; }
+    public int OwnerId { get; set; }
     
     public WorkspaceModel()
     {
         
     }
 
-    public WorkspaceModel(int id, string name, int ownerId)
+    public WorkspaceModel(string Id, string name, int ownerId)
     {
-        Id = id;
-        Name = name;
-        OwnerId = ownerId;
+        this.Id = ObjectId.Parse(Id);
+        this.Name = name;
+        this.OwnerId = ownerId;
     }
 }
