@@ -1,4 +1,5 @@
 using CodeCollab___WorkspaceService.Models;
+using CodeCollab___WorkspaceService.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CodeCollab___WorkspaceService.Controllers;
@@ -9,9 +10,13 @@ namespace CodeCollab___WorkspaceService.Controllers;
 public class WorkspaceController : ControllerBase
 {
     [HttpGet(Name = "GetWorkspace")]
-    public IActionResult GetWorkspace()
+    public IActionResult GetWorkspace(string workspaceId)
     {
-        return Ok(new WorkspaceModel(1, "test-workspace", 23));
+        WorkspaceService service = new WorkspaceService();
+        WorkspaceModel? workspace = service.GetWorkspaceById(workspaceId);
+        
+        if (workspace == null) return BadRequest("Could not find workspace with the given id.");
+        return Ok(workspace);
     }
 
     [HttpPost(Name = "CreateWorkspace")]
