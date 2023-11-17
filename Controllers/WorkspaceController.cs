@@ -11,6 +11,14 @@ namespace CodeCollab___WorkspaceService.Controllers;
 [Route("[controller]")]
 public class WorkspaceController : ControllerBase
 {
+    private readonly Messenger _messenger;
+
+    public WorkspaceController(Messenger messenger)
+    {
+        _messenger = messenger;
+    }
+    
+    
     [HttpGet(Name = "GetWorkspace")]
     public IActionResult GetWorkspace(string workspaceId)
     {
@@ -20,18 +28,22 @@ public class WorkspaceController : ControllerBase
         if (workspace == null) return BadRequest("Could not find workspace with the given id.");
         return Ok(workspace);
     }
-
+    
+    
     [HttpPost(Name = "CreateWorkspace")]
     public IActionResult CreateWorkspace([FromBody] WorkspaceModel workspace)
     {
         try 
         {
-            string workspaceData = JsonSerializer.Serialize(workspace);
-            
-            using (Messenger messenger = new Messenger("localhost", "WorkspaceService", "test-exchange", "test-queue"))
-            {
-                messenger.SendMessage("CREATE workspace FROM: " + workspaceData);
-            }
+            //string workspaceJson = JsonSerializer.Serialize(workspace);
+            MessageModel<WorkspaceModel> messageModel = new MessageModel<WorkspaceModel>(
+                "Command", 
+                "CreateWorkspace", 
+                workspace
+            );
+
+            string message = JsonSerializer.Serialize(messageModel);
+            _messenger.SendMessage(message);
             
             return Ok("Workspace creation successfully added to queue.");
         }

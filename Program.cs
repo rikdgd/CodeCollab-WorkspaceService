@@ -1,3 +1,5 @@
+using CodeCollab___WorkspaceService.Utils;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -14,6 +16,18 @@ builder.Services.AddCors(options =>
         policyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
 });
+
+
+builder.Services.AddSingleton(provider =>
+{
+    string hostname = "localhost";
+    string appName = "WorkspaceService";
+    string exchangeName = "CodeCollab";
+    string queueName = "workspace-queue";
+
+    return new Messenger(hostname, appName, exchangeName, queueName, false, true);
+});
+
 
 var app = builder.Build();
 
