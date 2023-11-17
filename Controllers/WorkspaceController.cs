@@ -1,5 +1,7 @@
+using System.Text.Json;
 using CodeCollab___WorkspaceService.Models;
 using CodeCollab___WorkspaceService.Services;
+using CodeCollab___WorkspaceService.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CodeCollab___WorkspaceService.Controllers;
@@ -22,6 +24,20 @@ public class WorkspaceController : ControllerBase
     [HttpPost(Name = "CreateWorkspace")]
     public IActionResult CreateWorkspace([FromBody] WorkspaceModel workspace)
     {
-        return Ok("Workspace created successfully");
+        try 
+        {
+            string workspaceData = JsonSerializer.Serialize(workspace);
+            
+            using (Messenger messenger = new Messenger("localhost", "WorkspaceService", "test-exchange", "test-queue"))
+            {
+                messenger.SendMessage("CREATE workspace FROM: " + workspaceData);
+            }
+            
+            return Ok("Workspace creation successfully added to queue.");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest("An error occured when trying to create the workspace: \n" + ex.Message);
+        }
     }
 }
