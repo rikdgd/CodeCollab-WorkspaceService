@@ -30,26 +30,26 @@ public class WorkspaceController : ControllerBase
     }
     
     
-    [HttpPost(Name = "CreateWorkspace")]
-    public IActionResult CreateWorkspace([FromBody] WorkspaceModel workspace)
-    {
-        try 
-        {
-            //string workspaceJson = JsonSerializer.Serialize(workspace);
-            MessageModel<WorkspaceModel> messageModel = new MessageModel<WorkspaceModel>(
-                "Command", 
-                "CreateWorkspace", 
-                workspace
-            );
-
-            string message = JsonSerializer.Serialize(messageModel);
-            _messenger.SendMessage(message);
-            
-            return Ok("Workspace creation successfully added to queue.");
-        }
-        catch (Exception ex)
-        {
-            return BadRequest("An error occured when trying to create the workspace: \n" + ex.Message);
-        }
-    }
+    // [HttpPost(Name = "CreateWorkspace")]
+    // public IActionResult CreateWorkspace([FromBody] WorkspaceModel workspace)
+    // {
+    //     try 
+    //     {
+    //         //string workspaceJson = JsonSerializer.Serialize(workspace);
+    //         MessageModel<WorkspaceModel> messageModel = new MessageModel<WorkspaceModel>(
+    //             "Command", 
+    //             "CreateWorkspace", 
+    //             workspace
+    //         );
+    //
+    //         string message = JsonSerializer.Serialize(messageModel);
+    //         _messenger.SendMessage(message);
+    //         
+    //         return Ok("Workspace creation successfully added to queue.");
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return BadRequest("An error occured when trying to create the workspace: \n" + ex.Message);
+    //     }
+    // }
 }

@@ -16,9 +16,9 @@ public class WorkspaceModel
         
     }
 
-    public WorkspaceModel(string Id, string name, int ownerId)
+    public WorkspaceModel(string id, string name, int ownerId)
     {
-        this.Id = ObjectId.Parse(Id);
+        this.Id = ObjectId.Parse(id);
         this.Name = name;
         this.OwnerId = ownerId;
     }
