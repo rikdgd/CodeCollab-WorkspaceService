@@ -16,7 +16,7 @@ public class BasicMessageHandler : IMessageHandler
             var messageType = jsonMessage.MessageType;
             var commandName = jsonMessage.CommandName;
             var payload = jsonMessage.Payload;
-
+            
             WorkspaceModel workspace = new WorkspaceModel()
             {
                 Name = payload.Name,

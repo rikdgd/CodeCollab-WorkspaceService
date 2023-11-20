@@ -19,7 +19,7 @@ public class WorkspaceController : ControllerBase
     }
     
     
-    [HttpGet(Name = "GetWorkspace")]
+    [HttpGet("GetWorkspace", Name = "GetWorkspace")]
     public IActionResult GetWorkspace(string workspaceId)
     {
         WorkspaceService service = new WorkspaceService();
@@ -28,28 +28,4 @@ public class WorkspaceController : ControllerBase
         if (workspace == null) return BadRequest("Could not find workspace with the given id.");
         return Ok(workspace);
     }
-    
-    
-    // [HttpPost(Name = "CreateWorkspace")]
-    // public IActionResult CreateWorkspace([FromBody] WorkspaceModel workspace)
-    // {
-    //     try 
-    //     {
-    //         //string workspaceJson = JsonSerializer.Serialize(workspace);
-    //         MessageModel<WorkspaceModel> messageModel = new MessageModel<WorkspaceModel>(
-    //             "Command", 
-    //             "CreateWorkspace", 
-    //             workspace
-    //         );
-    //
-    //         string message = JsonSerializer.Serialize(messageModel);
-    //         _messenger.SendMessage(message);
-    //         
-    //         return Ok("Workspace creation successfully added to queue.");
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         return BadRequest("An error occured when trying to create the workspace: \n" + ex.Message);
-    //     }
-    // }
 }

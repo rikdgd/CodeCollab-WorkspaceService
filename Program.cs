@@ -18,15 +18,14 @@ builder.Services.AddCors(options =>
 });
 
 
-builder.Services.AddSingleton(provider =>
-{
-    string hostname = "localhost";
-    string appName = "WorkspaceService";
-    string exchangeName = "CodeCollab";
-    string queueName = "workspace-queue";
+string hostname = "localhost";
+string appName = "WorkspaceService";
+string exchangeName = "CodeCollab";
+string queueName = "workspace-queue";
+BasicMessageHandler messageHandler = new BasicMessageHandler();
+Messenger messenger = new Messenger(hostname, appName, exchangeName, queueName, messageHandler);
 
-    return new Messenger(hostname, appName, exchangeName, queueName, new BasicMessageHandler());
-});
+builder.Services.AddSingleton<Messenger>(messenger);
 
 
 var app = builder.Build();
