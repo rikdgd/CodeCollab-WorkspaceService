@@ -5,43 +5,39 @@ using CodeCollab___WorkspaceService.Models;
 using CodeCollab___WorkspaceService.Services;
 using MongoDB.Bson.Serialization.Serializers;
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 namespace CodeCollab___WorkspaceService.Utils;
 
 public class BasicMessageHandler : IMessageHandler
 {
-    public void HandleMessage(string message)
+    public bool HandleMessage(string message)
     {
         try
         {
-            Dictionary<string, object>? jsonMessage = JsonSerializer.Deserialize<Dictionary<string, object>>(message);
-            // if (jsonMessage == null || jsonMessage == "") return; 
+            // Dictionary<string, object>? jsonMessage = JsonSerializer.Deserialize<Dictionary<string, object>>(message);
+            var jsonMessage = JObject.Parse(message);
             
-            string messageType = jsonMessage["MessageType"].ToString();
-            string commandName = jsonMessage["CommandName"].ToString();
-            var payload = jsonMessage["Payload"];// as IDictionary<string, object>;
-
-            if (payload is Dictionary<string, object> payloadDict)
+            var messageType = jsonMessage?["MessageType"].ToString();
+            var commandName = jsonMessage?["CommandName"].ToString();
+            var payload = jsonMessage["Payload"] as JObject;
+            
+            WorkspaceModel workspace = new WorkspaceModel()
             {
-                var Name = payloadDict["Name"];
-                var OwnerId = payloadDict["OwnerId"];
-            }
-            else
-            {
-                string name = "failed...";
-            }
-            // WorkspaceModel workspace = new WorkspaceModel()
-            // {
-            //     Name = payload["Name"],
-            //     OwnerId = payload["OwnerId"]
-            // };
+                Name = (string)payload["Name"],
+                OwnerId = (int)payload["OwnerId"]
+            };
             
             WorkspaceService service = new WorkspaceService();
-            // service.CreateWorkspace(workspace);
+            service.CreateWorkspace(workspace);
+            
+            return true;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            throw;
+            return false;
         }
     }
 
