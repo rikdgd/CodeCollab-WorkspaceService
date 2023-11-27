@@ -1,15 +1,16 @@
-using CodeCollab___WorkspaceService.Interfaces;
 using CodeCollab___WorkspaceService.Models;
 using CodeCollab___WorkspaceService.Services;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using CarrotMQ;
+
 namespace CodeCollab___WorkspaceService.Utils;
 
 public class BasicMessageHandler : IMessageHandler
 {
-    public bool HandleMessage(string message)
+    public void HandleMessage(string message)
     {
         try
         {
@@ -27,13 +28,10 @@ public class BasicMessageHandler : IMessageHandler
             
             WorkspaceService service = new WorkspaceService();
             service.CreateWorkspace(workspace);
-            
-            return true;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return false;
         }
     }
 

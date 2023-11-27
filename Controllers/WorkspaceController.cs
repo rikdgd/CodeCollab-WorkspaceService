@@ -3,6 +3,7 @@ using CodeCollab___WorkspaceService.Models;
 using CodeCollab___WorkspaceService.Services;
 using CodeCollab___WorkspaceService.Utils;
 using Microsoft.AspNetCore.Mvc;
+using CarrotMQ;
 
 namespace CodeCollab___WorkspaceService.Controllers;
 
