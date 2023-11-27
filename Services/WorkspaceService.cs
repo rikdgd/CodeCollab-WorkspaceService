@@ -50,6 +50,9 @@ public class WorkspaceService
 
     public void CreateWorkspace(WorkspaceModel workspaceModel)
     {
+        var collection = mongoClient.GetDatabase(databaseName).GetCollection<BsonDocument>(collectionName);
+        BsonDocument workspaceData = workspaceModel.ToBsonDocument();
         
+        collection.InsertOne(workspaceData);
     }
 }

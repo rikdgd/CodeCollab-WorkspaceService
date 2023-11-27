@@ -1,6 +1,7 @@
 using System.Text;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using CodeCollab___WorkspaceService.Interfaces;
 
 namespace CodeCollab___WorkspaceService.Utils;
 
@@ -9,7 +10,7 @@ public class Messenger : IDisposable
     public string ExchangeName { get; private set; }
     public string QueueName { get; private set; }
     
-    private List<string>? messageStorage { get; set; }
+    private IMessageHandler messageHandler { get; set; }
     private EventingBasicConsumer? consumer { get; set; }
     private ConnectionFactory factory { get; set; }
     private string? consumerTag { get; set; }
@@ -26,7 +27,7 @@ public class Messenger : IDisposable
     /// <param name="queueName">The name of the message queue this messenger should be connected to.</param>
     /// <param name="isConsumer">Specifies whether this messenger can only send or also receive messages.</param>
     /// <param name="autoDeclare">Whether ot not the messenger should automatically declare unexisting exchanges and queues.</param>
-    public Messenger(string hostName, string appName, string exchangeName, string queueName, bool isConsumer = true, bool autoDeclare = true)
+    public Messenger(string hostName, string appName, string exchangeName, string queueName, IMessageHandler messageHandler, bool isConsumer = true, bool autoDeclare = true)
     {
         this.ExchangeName = exchangeName;
         this.QueueName = queueName;
@@ -35,6 +36,7 @@ public class Messenger : IDisposable
             HostName = hostName, 
             ClientProvidedName = appName 
         };
+        this.messageHandler = messageHandler;
         
         this.connection = this.factory.CreateConnection();
         this.channel = this.connection.CreateModel();
@@ -72,14 +74,15 @@ public class Messenger : IDisposable
                 global: false
             );
             
-            this.messageStorage = new List<string>();
+            // this.messageStorage = new BasicMessageStorage();
             this.consumer = new EventingBasicConsumer(this.channel);
             this.consumer.Received += (sender, args) =>
             {
                 byte[] messageBody = args.Body.ToArray();
                 string receivedMessage = Encoding.UTF8.GetString(messageBody);
 
-                this.messageStorage.Add(receivedMessage);
+                // this.messageStorage.StoreMessage(receivedMessage);
+                this.messageHandler.HandleMessage(receivedMessage);
                 
                 // ToDo: Acknowledge the message ONLY when handling it went successful.
                 this.channel.BasicAck(deliveryTag: args.DeliveryTag, multiple: false);
@@ -132,51 +135,6 @@ public class Messenger : IDisposable
             basicProperties: this.publishProps,
             body: message
         );
-    }
-
-    /// <summary>
-    /// Reads the messages from the message bus.
-    /// </summary>
-    /// <returns>A list with all the received messages.</returns>
-    public List<string>? ReadMessages()
-    {
-        if (this.messageStorage != null) 
-        {
-            return this.messageStorage;
-        }
-        
-        return null;
-    }
-
-    /// <summary>
-    /// Reads the last message from the message bus.
-    /// </summary>
-    /// <returns>A string containing the final message that was received. </returns>
-    public string? ReadLastMessage()
-    {
-        if (this.messageStorage == null) return null;
-        
-        return this.messageStorage[0];
-    }
-    
-    public string? ReadAndDestroyMessage()
-    {
-        if (this.messageStorage == null) return null;
-        
-        string message =  this.messageStorage[0];
-        messageStorage.RemoveAt(0);
-        
-        return message;
-    }
-
-    public List<string>? readAndDestroyMessages()
-    {
-        if (this.messageStorage == null) return null;
-        
-        var messages = this.messageStorage;
-        messageStorage.Clear();
-        
-        return messages;
     }
 }
 
