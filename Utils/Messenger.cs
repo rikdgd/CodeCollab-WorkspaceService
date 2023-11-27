@@ -10,7 +10,6 @@ public class Messenger : IDisposable
     public string ExchangeName { get; private set; }
     public string QueueName { get; private set; }
     
-    // private IMessageStorage? messageStorage { get; set; }
     private IMessageHandler messageHandler { get; set; }
     private EventingBasicConsumer? consumer { get; set; }
     private ConnectionFactory factory { get; set; }

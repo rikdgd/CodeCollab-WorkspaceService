@@ -1,9 +1,6 @@
-using System.Dynamic;
-using System.Text.Json;
 using CodeCollab___WorkspaceService.Interfaces;
 using CodeCollab___WorkspaceService.Models;
 using CodeCollab___WorkspaceService.Services;
-using MongoDB.Bson.Serialization.Serializers;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,7 +13,6 @@ public class BasicMessageHandler : IMessageHandler
     {
         try
         {
-            // Dictionary<string, object>? jsonMessage = JsonSerializer.Deserialize<Dictionary<string, object>>(message);
             var jsonMessage = JObject.Parse(message);
             
             var messageType = jsonMessage?["MessageType"].ToString();
