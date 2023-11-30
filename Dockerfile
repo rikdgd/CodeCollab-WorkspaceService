@@ -3,8 +3,11 @@ WORKDIR /app
 COPY . .
 RUN dotnet build --configuration Release
 
+FROM build AS publish
+RUN dotnet publish --configuration Release --no-build -o /app/publish
+
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS release
-EXPOSE 7240:7240
 WORKDIR /app
-COPY --from=build /app/codecollab-backend/bin/Release .
-RUN dotnet run
+COPY --from=publish /app/publish .
+EXPOSE 7240:7240
+ENTRYPOINT ["dotnet", "CodeCollab - WorkspaceService.dll"]
