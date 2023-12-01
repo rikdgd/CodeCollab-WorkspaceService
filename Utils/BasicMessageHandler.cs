@@ -5,11 +5,19 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using CarrotMQ;
+using CodeCollab___WorkspaceService.Interfaces;
 
 namespace CodeCollab___WorkspaceService.Utils;
 
 public class BasicMessageHandler : IMessageHandler
 {
+    public IWorkspaceService service { get; private set; }
+
+    public BasicMessageHandler(IWorkspaceService service)
+    {
+        this.service = service;
+    }
+
     public void HandleMessage(string message)
     {
         try
@@ -26,8 +34,8 @@ public class BasicMessageHandler : IMessageHandler
                 OwnerId = (int)payload["OwnerId"]
             };
             
-            WorkspaceService service = new WorkspaceService();
-            service.CreateWorkspace(workspace);
+            // WorkspaceService service = new WorkspaceService();
+            this.service.CreateWorkspace(workspace);
         }
         catch (Exception e)
         {

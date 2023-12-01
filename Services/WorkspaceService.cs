@@ -1,3 +1,4 @@
+using CodeCollab___WorkspaceService.Interfaces;
 using CodeCollab___WorkspaceService.Models;
 using MongoDB.Driver;
 using MongoDB.Bson;
@@ -6,7 +7,7 @@ using MongoDB.Bson.Serialization;
 
 namespace CodeCollab___WorkspaceService.Services;
 
-public class WorkspaceService
+public class WorkspaceService : IWorkspaceService
 {
     private string databaseName = "CodeCollab-testing";
     private string collectionName = "Workspaces";
