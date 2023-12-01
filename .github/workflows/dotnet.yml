@@ -42,8 +42,8 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     
     - name: Build Docker image
-      run: docker build -t codecollab-workspace-service:latest .
+      run: docker build -t rikdegoede/codecollab-workspace-service:latest .
       
     - name: Push Docker image
-      run: docker push codecollab-workspace-service:latest
+      run: docker push rikdegoede/codecollab-workspace-service:latest
       
