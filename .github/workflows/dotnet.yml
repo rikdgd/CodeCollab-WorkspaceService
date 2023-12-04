@@ -42,8 +42,6 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     
     - name: Build Docker image
-      env: 
-        MONGODB_URI: ${{ secrets.MONGODB_URI }}
       run: docker build -t rikdegoede/codecollab-workspace-service:latest .
       
     - name: Push Docker image
