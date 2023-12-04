@@ -20,7 +20,7 @@ builder.Services.AddCors(options =>
 });
 
 
-string hostname = "localhost";
+string hostname = "amqp://guest:guest@rabbitmq:5672/";
 string appName = "WorkspaceService";
 string exchangeName = "CodeCollab";
 string queueName = "workspace-queue";
