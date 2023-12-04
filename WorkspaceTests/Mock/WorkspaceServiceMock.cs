@@ -6,9 +6,9 @@ namespace WorkspaceTests.Mock;
 
 public class WorkspaceServiceMock : IWorkspaceService
 {
-    public BsonDocument[]? workspaces { get; set; } = null;
+    public List<BsonDocument> workspaces { get; set; } = new();
     
-    
+
     public WorkspaceModel? GetWorkspaceById(string id)
     {
         return new WorkspaceModel(id, "test-workspace", 22);
@@ -18,7 +18,9 @@ public class WorkspaceServiceMock : IWorkspaceService
     {
         try
         {
-            this.workspaces.Append(workspaceModel.ToBsonDocument());
+            var bsonModel = workspaceModel.ToBsonDocument();
+            var newWorkspaces = this.workspaces.Append(bsonModel);
+            this.workspaces = new List<BsonDocument>(newWorkspaces);
         }
         catch (Exception e)
         {
