@@ -1,33 +1,34 @@
 using CodeCollab___WorkspaceService.Models;
-using CodeCollab___WorkspaceService.Services;
 
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using CarrotMQ;
+using CodeCollab___WorkspaceService.Interfaces;
+
 
 namespace CodeCollab___WorkspaceService.Utils;
 
 public class BasicMessageHandler : IMessageHandler
 {
+    public IWorkspaceService service { get; private set; }
+
+    public BasicMessageHandler(IWorkspaceService service)
+    {
+        this.service = service;
+    }
+
     public void HandleMessage(string message)
     {
         try
         {
             var jsonMessage = JObject.Parse(message);
-            
             var messageType = jsonMessage?["MessageType"].ToString();
             var commandName = jsonMessage?["CommandName"].ToString();
-            var payload = jsonMessage["Payload"] as JObject;
             
-            WorkspaceModel workspace = new WorkspaceModel()
+            if (messageType == "Command")
             {
-                Name = (string)payload["Name"],
-                OwnerId = (int)payload["OwnerId"]
-            };
-            
-            WorkspaceService service = new WorkspaceService();
-            service.CreateWorkspace(workspace);
+                if (commandName == "CreateWorkspace") this.CreateWorkspace(jsonMessage);
+            }
         }
         catch (Exception e)
         {
@@ -35,10 +36,23 @@ public class BasicMessageHandler : IMessageHandler
         }
     }
 
-    private enum MessageType
+    private void CreateWorkspace(JObject? messageData)
     {
-        Command,
-        Status,
-        Error
+        try
+        {
+            var payload = messageData["Payload"] as JObject;
+
+            WorkspaceModel workspace = new WorkspaceModel()
+            {
+                Name = (string)payload["Name"],
+                OwnerId = (int)payload["OwnerId"]
+            };
+
+            this.service.CreateWorkspace(workspace);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 }

@@ -1,5 +1,6 @@
 using CodeCollab___WorkspaceService.Utils;
 using CarrotMQ;
+using CodeCollab___WorkspaceService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +24,8 @@ string hostname = "localhost";
 string appName = "WorkspaceService";
 string exchangeName = "CodeCollab";
 string queueName = "workspace-queue";
-BasicMessageHandler messageHandler = new BasicMessageHandler();
+WorkspaceService workspaceService = new WorkspaceService();
+BasicMessageHandler messageHandler = new BasicMessageHandler(workspaceService);
 Messenger messenger = new Messenger(hostname, appName, exchangeName, queueName, messageHandler);
 
 builder.Services.AddSingleton<Messenger>(messenger);
