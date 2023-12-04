@@ -10,4 +10,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS release
 WORKDIR /app
 COPY --from=publish /app/publish .
 EXPOSE 7240:7240
+ARG MONGODB_URI
+ENV MONGODB_URI=${MONGODB_URI}
 ENTRYPOINT ["dotnet", "CodeCollab - WorkspaceService.dll"]
