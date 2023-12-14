@@ -28,7 +28,7 @@ public class WorkspaceController : ControllerBase
         return Ok(workspace);
     }
     
-    // TEMP
+    
     [HttpGet("GetWorkspaceByUserId", Name = "GetWorkspaceByUserId")]
     public async Task<IActionResult> GetWorkspaceByUserId(string userId)
     {
