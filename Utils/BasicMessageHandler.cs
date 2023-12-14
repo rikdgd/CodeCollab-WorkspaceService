@@ -1,8 +1,7 @@
-using CodeCollab___WorkspaceService.Models;
-
 using Newtonsoft.Json.Linq;
+using RabbitMessenger.Interfaces;
 
-using CarrotMQ;
+using CodeCollab___WorkspaceService.Models;
 using CodeCollab___WorkspaceService.Interfaces;
 
 
@@ -27,7 +26,7 @@ public class BasicMessageHandler : IMessageHandler
             
             if (messageType == "Command")
             {
-                if (commandName == "CreateWorkspace") this.CreateWorkspace(jsonMessage);
+                if (commandName == "CreateWorkspace") CreateWorkspace(jsonMessage);
             }
         }
         catch (Exception e)
@@ -45,7 +44,7 @@ public class BasicMessageHandler : IMessageHandler
             WorkspaceModel workspace = new WorkspaceModel()
             {
                 Name = (string)payload["Name"],
-                OwnerId = (int)payload["OwnerId"]
+                OwnerId = (string)payload["OwnerId"]
             };
 
             this.service.CreateWorkspace(workspace);

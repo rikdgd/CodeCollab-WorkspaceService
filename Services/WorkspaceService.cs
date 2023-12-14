@@ -49,6 +49,24 @@ public class WorkspaceService : IWorkspaceService
         }
     }
 
+
+    public async Task<List<WorkspaceModel>> GetAllWorkspacesByUserId(string id)
+    {
+        try
+        {
+            var collection = this.mongoClient.GetDatabase(databaseName).GetCollection<WorkspaceModel>(collectionName);
+            var filter = Builders<WorkspaceModel>.Filter.Eq<string>(r => r.OwnerId, id);
+            return await collection.Find(filter).ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+        return new List<WorkspaceModel>();
+    }
+    
+
     public void CreateWorkspace(WorkspaceModel workspaceModel)
     {
         var collection = mongoClient.GetDatabase(databaseName).GetCollection<BsonDocument>(collectionName);

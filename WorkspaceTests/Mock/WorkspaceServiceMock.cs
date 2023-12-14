@@ -11,7 +11,7 @@ public class WorkspaceServiceMock : IWorkspaceService
 
     public WorkspaceModel? GetWorkspaceById(string id)
     {
-        return new WorkspaceModel(id, "test-workspace", 22);
+        return new WorkspaceModel(id, "test-workspace", "22");
     }
 
     public void CreateWorkspace(WorkspaceModel workspaceModel)

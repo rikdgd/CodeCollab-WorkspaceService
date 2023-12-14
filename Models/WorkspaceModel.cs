@@ -12,14 +12,14 @@ public class WorkspaceModel
     public ObjectId? Id { get; set; }
     
     public string Name { get; set; }
-    public int OwnerId { get; set; }
+    public string OwnerId { get; set; }
     
     public WorkspaceModel()
     {
         
     }
 
-    public WorkspaceModel(string id, string name, int ownerId)
+    public WorkspaceModel(string id, string name, string ownerId)
     {
         this.Id = ObjectId.Parse(id);
         this.Name = name;
