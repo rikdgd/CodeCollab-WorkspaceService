@@ -1,5 +1,5 @@
 using CodeCollab___WorkspaceService.Utils;
-using CarrotMQ;
+using RabbitMessenger;
 using CodeCollab___WorkspaceService.Services;
 
 var builder = WebApplication.CreateBuilder(args);

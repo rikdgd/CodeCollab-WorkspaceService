@@ -1,9 +1,7 @@
-using System.Text.Json;
 using CodeCollab___WorkspaceService.Models;
 using CodeCollab___WorkspaceService.Services;
-using CodeCollab___WorkspaceService.Utils;
 using Microsoft.AspNetCore.Mvc;
-using CarrotMQ;
+using RabbitMessenger;
 
 namespace CodeCollab___WorkspaceService.Controllers;
 
@@ -13,6 +11,7 @@ namespace CodeCollab___WorkspaceService.Controllers;
 public class WorkspaceController : ControllerBase
 {
     private readonly Messenger _messenger;
+    private readonly WorkspaceService _service = new();
 
     public WorkspaceController(Messenger messenger)
     {
@@ -23,10 +22,19 @@ public class WorkspaceController : ControllerBase
     [HttpGet("GetWorkspace", Name = "GetWorkspace")]
     public IActionResult GetWorkspace(string workspaceId)
     {
-        WorkspaceService service = new WorkspaceService();
-        WorkspaceModel? workspace = service.GetWorkspaceById(workspaceId);
+        WorkspaceModel? workspace = _service.GetWorkspaceById(workspaceId);
         
         if (workspace == null) return BadRequest("Could not find workspace with the given id.");
         return Ok(workspace);
+    }
+    
+    // TEMP
+    [HttpGet("GetWorkspaceByUserId", Name = "GetWorkspaceByUserId")]
+    public async Task<IActionResult> GetWorkspaceByUserId(string userId)
+    {
+        List<WorkspaceModel>? workspaces = await _service.GetAllWorkspacesByUserId(userId);
+        
+        if (workspaces == null) return BadRequest("Could not find workspace with the given id.");
+        return Ok(workspaces);
     }
 }
